@@ -14,15 +14,18 @@ const getProductsFromFile = (cb) => {
   })
 }
 module.exports = class Product {
-  constructor(t) {
+  constructor(t, imageUrl, description, price) {
     this.title = t
+    this.imageUrl = imageUrl
+    this.description = description
+    this.price = price
   }
 
   save() {
     getProductsFromFile((products) => {
       products.push(this)
       fs.writeFile(p, JSON.stringify(products), (err) => {
-        console.log(error)
+        console.log(err)
       })
     })
   }
