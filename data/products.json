@@ -1,1 +1,1 @@
-[{"id": "1","title":"foo","imageUrl":"https://via.placeholder.com/150","description":"aa","price":"12"}, {"id": "2","title":"foo2","imageUrl":"https://via.placeholder.com/150","description":"22","price":"13"}]
+[{"id":"1","title":"foo1 ","imageUrl":"https://via.placeholder.com/150    ","description":"    aa    ","price":"12.12"},{"id":"2","title":"foo2 ","imageUrl":"https://via.placeholder.com/150 ","description":"alt text","price":"13"}]

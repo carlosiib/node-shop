@@ -15,6 +15,14 @@ exports.postAddProduct = (req, res, next) => {
   res.redirect('/');
 }
 
+exports.postEditProduct = (req, res) => {
+  const { productId, title, description, price, imageUrl } = req.body
+  const updated = new Product(productId, title, imageUrl, description, price)
+  updated.save()
+  res.redirect("/admin/products")
+
+}
+
 exports.getEditProduct = async (req, res, next) => {
   const { edit } = req.query
   const { productId } = req.params
