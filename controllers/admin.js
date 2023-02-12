@@ -22,9 +22,10 @@ exports.postEditProduct = (req, res) => {
   res.redirect("/admin/products")
 }
 
-exports.postDeleteProduct = (req, res) => {
+exports.postDeleteProduct = async (req, res) => {
   const { productId } = req.body
-
+  await Product.deleteById(productId)
+  res.redirect("/admin/products")
 }
 
 exports.getEditProduct = async (req, res, next) => {

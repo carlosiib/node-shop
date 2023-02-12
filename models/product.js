@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 
+const Cart = require('./cart')
 const rootDir = require('../utils/path')
 
 const p = path.join(rootDir, 'data', 'products.json')
@@ -45,12 +46,14 @@ module.exports = class Product {
   static deleteById(id) {
     return new Promise((resolve) => {
       getProductsFromFile(products => {
+        const product = products.find(p => p.id === id)
         const updatedProd = products.filter(p => p.id !== id)
         fs.writeFile(p, JSON.stringify(updatedProd), (error) => {
           if (!error) {
+            Cart.deleteProduct(id, product.price)
             resolve(updatedProd)
           }
-          console.log(err)
+          console.log(error)
         })
       })
     })
