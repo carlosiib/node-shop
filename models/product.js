@@ -42,6 +42,20 @@ module.exports = class Product {
     })
   }
 
+  static deleteById(id) {
+    return new Promise((resolve) => {
+      getProductsFromFile(products => {
+        const updatedProd = products.filter(p => p.id !== id)
+        fs.writeFile(p, JSON.stringify(updatedProd), (error) => {
+          if (!error) {
+            resolve(updatedProd)
+          }
+          console.log(err)
+        })
+      })
+    })
+  }
+
   static fetchAll(cb) {
     getProductsFromFile(cb)
   }
