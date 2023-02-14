@@ -14,13 +14,19 @@ exports.getProducts = async (req, res, next) => {
 }
 
 exports.getProduct = async (req, res) => {
-  const { productId } = req.params
-  const product = await Product.findById(productId)
-  res.render('shop/product-detail', {
-    product,
-    pageTitle: product.title,
-    path: '/products'
-  })
+  try {
+    const { productId } = req.params
+    const [product] = await Product.findById(productId)
+    console.log(product[0])
+    res.render('shop/product-detail', {
+      product: product[0],
+      pageTitle: product[0].title,
+      path: '/products'
+    })
+  } catch (error) {
+    console.log(error)
+  }
+
 }
 
 exports.getIndex = async (req, res) => {
