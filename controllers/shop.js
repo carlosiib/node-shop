@@ -2,8 +2,8 @@ const Product = require("../models/product")
 const Cart = require("../models/cart")
 
 exports.getProducts = async (req, res, next) => {
-  Product.fetchAll()
-    .then(([products]) => {
+  Product.findAll()
+    .then((products) => {
       res.render('shop/product-list', {
         prods: products,
         pageTitle: 'All products',
@@ -31,9 +31,9 @@ exports.getProduct = async (req, res) => {
 
 exports.getIndex = async (req, res) => {
   try {
-    const p = await Product.fetchAll()
+    const p = await Product.findAll()
     res.render('shop/product-list', {
-      prods: p[0],
+      prods: p,
       pageTitle: 'All products',
       path: '/products',
     });
