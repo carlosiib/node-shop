@@ -47,7 +47,6 @@ exports.getEditProduct = async (req, res, next) => {
     return res.redirect('/')
   }
 
-  console.log(edit)
   res.render('admin/edit-product', {
     pageTitle: 'Edit Product',
     path: '/admin/edit-product',
@@ -56,12 +55,15 @@ exports.getEditProduct = async (req, res, next) => {
   });
 }
 
-exports.getProducts = (req, res) => {
-  Product.fetchAll((products) => {
+exports.getProducts = async (req, res) => {
+  try {
+    const products = await Product.findAll()
     res.render('admin/products', {
       prods: products,
       pageTitle: 'Admin products',
       path: '/admin/products',
     });
-  })
+  } catch (error) {
+    console.log(error)
+  }
 }
