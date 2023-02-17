@@ -16,11 +16,11 @@ exports.getProducts = async (req, res, next) => {
 exports.getProduct = async (req, res) => {
   try {
     const { productId } = req.params
-    const [product] = await Product.findById(productId)
-    console.log(product[0])
+    const product = await Product.findByPk(productId)
+    console.log(product)
     res.render('shop/product-detail', {
-      product: product[0],
-      pageTitle: product[0].title,
+      product: product,
+      pageTitle: product.title,
       path: '/products'
     })
   } catch (error) {
