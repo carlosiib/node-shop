@@ -56,7 +56,7 @@ exports.getEditProduct = async (req, res, next) => {
     const { edit } = req.query
     const { productId } = req.params
 
-    const product = await Product.findByPk(productId)
+    const [product] = await req.user.getProducts({ where: { id: productId } })
 
     if (!edit || !product) {
       return res.redirect('/')
