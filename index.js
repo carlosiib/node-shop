@@ -12,21 +12,49 @@ const shopRoutes = require('./routes/shop')
 
 const errorController = require('./controllers/error')
 const sequelize = require('./utils/database')
+const Product = require('./models/product')
+const User = require('./models/user')
 
 //npm start
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(async (req, res, next) => {
+  try {
+    const user = await User.findByPk(1)
+    req.user = user
+    next()
+  } catch (error) {
+    console.log(error)
+  }
+
+})
 
 app.use('/admin', adminRoute)
 app.use(shopRoutes)
 
 app.use(errorController.get404)
 
+// Relation - association
+Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" })
+User.hasMany(Product)
+
 // Sync -> creating tables IF NOT exists
-sequelize.sync().then(res => {
-  app.listen(3000, () => {
-    console.log("App running on port 3000")
+sequelize.sync()
+  .then(res => {
+    return User.findByPk(1)
   })
-}).catch(error => {
-  console.log(error)
-})
+  .then(user => {
+    if (!user) {
+      return User.create({ name: "foo", email: "foo@gmail.com" })
+    }
+    return user
+  })
+  .then(user => {
+    app.listen(3000, () => {
+      console.log("App running on port 3000")
+    })
+  })
+  .catch(error => {
+    console.log(error)
+  })
