@@ -8,16 +8,21 @@ exports.getAddProduct = (req, res, next) => {
   });
 }
 
-exports.postAddProduct = (req, res, next) => {
-  const { title, description, price, imageUrl } = req.body
-  Product.create({
-    title,
-    price,
-    imageUrl,
-    description
-  }).then(res => {
-    console.log(res)
-  }).catch(err => console.log(err))
+exports.postAddProduct = async (req, res, next) => {
+  try {
+    const { title, description, price, imageUrl } = req.body
+    // req.user -> obj from middleware 
+    // createProduct() -> method created on the fly by Sequelize, which inherits all properties from associations
+    await req.user.createProduct({
+      title,
+      price,
+      imageUrl,
+      description,
+    })
+    res.redirect("/admin/products")
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 exports.postEditProduct = async (req, res) => {
