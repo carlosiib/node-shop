@@ -14,6 +14,8 @@ const errorController = require('./controllers/error')
 const sequelize = require('./utils/database')
 const Product = require('./models/product')
 const User = require('./models/user')
+const Cart = require('./models/cart')
+const CartItem = require('./models/cart-item')
 
 //npm start
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -38,6 +40,14 @@ app.use(errorController.get404)
 // Relation - association
 Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" })
 User.hasMany(Product)
+
+// 1-1
+User.hasOne(Cart)
+Cart.belongsTo(User)
+
+// n-n
+Cart.belongsToMany(Product, { through: CartItem })
+Product.belongsToMany(Cart, { through: CartItem })
 
 // Sync -> creating tables IF NOT exists
 sequelize.sync()
