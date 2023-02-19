@@ -61,6 +61,9 @@ sequelize.sync()
     return user
   })
   .then(user => {
+    return user.createCart()
+  })
+  .then(() => {
     app.listen(3000, () => {
       console.log("App running on port 3000")
     })
