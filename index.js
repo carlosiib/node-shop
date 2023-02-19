@@ -12,10 +12,13 @@ const shopRoutes = require('./routes/shop')
 
 const errorController = require('./controllers/error')
 const sequelize = require('./utils/database')
+
 const Product = require('./models/product')
 const User = require('./models/user')
 const Cart = require('./models/cart')
 const CartItem = require('./models/cart-item')
+const Order = require('./models/order')
+const OrderItem = require('./models/order-item')
 
 //npm start
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -48,6 +51,10 @@ Cart.belongsTo(User)
 // n-n
 Cart.belongsToMany(Product, { through: CartItem })
 Product.belongsToMany(Cart, { through: CartItem })
+
+Order.belongsTo(User)
+User.hasMany(Order)
+Order.belongsToMany(Product, { through: OrderItem })
 
 // Sync -> creating tables IF NOT exists
 sequelize.sync()
