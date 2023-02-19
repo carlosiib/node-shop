@@ -91,14 +91,6 @@ exports.postCartDeleteProduct = async (req, res) => {
   }
 }
 
-
-exports.getOrders = (req, res) => {
-  res.render('shop/orders', {
-    pageTitle: 'Orders',
-    path: '/orders',
-  });
-}
-
 exports.postOrder = async (req, res) => {
   try {
     const cart = await req.user.getCart()
@@ -109,12 +101,27 @@ exports.postOrder = async (req, res) => {
       return p
     }
     ))
+
+    // Empty cart items 
+    await cart.setProducts(null)
     res.redirect('/orders')
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+exports.getOrders = (req, res) => {
+  try {
+    res.render('shop/orders', {
+      pageTitle: 'Orders',
+      path: '/orders',
+    });
   } catch (error) {
     console.log(error)
   }
 
 }
+
 
 exports.getCheckout = (req, res) => {
   res.render('shop/checkout', {
