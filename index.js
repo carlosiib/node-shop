@@ -57,7 +57,7 @@ User.hasMany(Order)
 Order.belongsToMany(Product, { through: OrderItem })
 
 // Sync -> creating tables IF NOT exists
-sequelize.sync()
+sequelize.sync({ force: false })
   .then(res => {
     return User.findByPk(1)
   })
