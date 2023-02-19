@@ -57,10 +57,35 @@ exports.getCart = async (req, res) => {
 };
 
 exports.postCart = async (req, res) => {
-  const { productId } = req.body
-  const p = await Product.findById(productId)
-  Cart.addProduct(productId, p.price)
-  res.redirect('/cart')
+  try {
+    const { productId } = req.body
+    //let fetchedCart
+    const cart = await req.user.getCart()
+    let fetchedCart = cart
+    const products = await cart.getProducts({ where: { id: productId } })
+
+    let product
+    if (products.length > 0) {
+      product = products[0]
+    }
+
+    // product already exists in cart
+    // cartItems -> generated on the fly by sequelize
+    let newQuantity = 1
+    if (product) {
+      const oldQty = product.cartItem.quantity
+      newQuantity = oldQty + 1
+      await fetchedCart.addProduct(product, { through: { quantity: newQuantity } })
+    }
+
+    // adding product for first time
+    const newProd = await Product.findByPk(productId)
+    await fetchedCart.addProduct(newProd, { through: { quantity: newQuantity } })
+
+    res.redirect('/cart')
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 exports.postCartDeleteProduct = async (req, res) => {
