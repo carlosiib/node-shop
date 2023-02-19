@@ -196,6 +196,16 @@ form {
 .center{
   text-align:center;
 }
+
+.txt-right{
+  text-align: right;
+}
+
+ul{
+  padding-left:0;
+  list-style: none;
+}
+
 @media (min-width: 768px) {
   .main-header__nav {
     display: flex;
@@ -204,4 +214,22 @@ form {
   #side-menu-toggle {
     display: none;
   }
+
+  .container{
+    max-width: 40rem;
+    margin-inline: auto;
+  }
+
+  .cart-item{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    gap:2rem;
+    border-bottom: 1px solid lightgrey;
+  }
+
+  .cart-item__title{
+    width: 22rem;
+  }
+
 }
