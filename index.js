@@ -7,11 +7,11 @@ const app = express()
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-// const adminRoute = require('./routes/admin')
+const adminRoute = require('./routes/admin')
 // const shopRoutes = require('./routes/shop')
 
 const errorController = require('./controllers/error')
-const mongoConnect = require('./utils/database')
+const mongoConnect = require('./utils/database').mongoConnect
 
 //npm start
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -25,10 +25,10 @@ app.use(async (req, res, next) => {
   // } catch (error) {
   //   console.log(error)
   // }
-
+  next()
 })
 
-// app.use('/admin', adminRoute)
+app.use('/admin', adminRoute)
 // app.use(shopRoutes)
 
 app.use(errorController.get404)

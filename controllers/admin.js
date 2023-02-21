@@ -11,28 +11,12 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = async (req, res, next) => {
   try {
     const { title, description, price, imageUrl } = req.body
-    // req.user -> obj from middleware 
-    // createProduct() -> method created on the fly by Sequelize, which inherits all properties from associations
-    await req.user.createProduct({
+    const product = new Product(
       title,
       price,
       imageUrl,
       description,
-    })
-    res.redirect("/admin/products")
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-exports.postEditProduct = async (req, res) => {
-  try {
-    const { productId, title, description, price, imageUrl } = req.body
-    const product = await Product.findByPk(productId)
-    product.title = title
-    product.description = description
-    product.price = price
-    product.imageUrl = imageUrl
+    )
     await product.save()
     res.redirect("/admin/products")
   } catch (error) {
@@ -40,48 +24,63 @@ exports.postEditProduct = async (req, res) => {
   }
 }
 
-exports.postDeleteProduct = async (req, res) => {
-  try {
-    const { productId } = req.body
-    const product = await Product.findByPk(productId)
-    await product.destroy()
-    res.redirect("/admin/products")
-  } catch (error) {
-    console.log(error)
-  }
-}
+// exports.postEditProduct = async (req, res) => {
+//   try {
+//     const { productId, title, description, price, imageUrl } = req.body
+//     const product = await Product.findByPk(productId)
+//     product.title = title
+//     product.description = description
+//     product.price = price
+//     product.imageUrl = imageUrl
+//     await product.save()
+//     res.redirect("/admin/products")
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
 
-exports.getEditProduct = async (req, res, next) => {
-  try {
-    const { edit } = req.query
-    const { productId } = req.params
+// exports.postDeleteProduct = async (req, res) => {
+//   try {
+//     const { productId } = req.body
+//     const product = await Product.findByPk(productId)
+//     await product.destroy()
+//     res.redirect("/admin/products")
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
 
-    const [product] = await req.user.getProducts({ where: { id: productId } })
+// exports.getEditProduct = async (req, res, next) => {
+//   try {
+//     const { edit } = req.query
+//     const { productId } = req.params
 
-    if (!edit || !product) {
-      return res.redirect('/')
-    }
+//     const [product] = await req.user.getProducts({ where: { id: productId } })
 
-    res.render('admin/edit-product', {
-      pageTitle: 'Edit Product',
-      path: '/admin/edit-product',
-      editing: edit,
-      product
-    });
-  } catch (error) {
-    console.log(error)
-  }
-}
+//     if (!edit || !product) {
+//       return res.redirect('/')
+//     }
 
-exports.getProducts = async (req, res) => {
-  try {
-    const products = await req.user.getProducts()
-    res.render('admin/products', {
-      prods: products,
-      pageTitle: 'Admin products',
-      path: '/admin/products',
-    });
-  } catch (error) {
-    console.log(error)
-  }
-}
+//     res.render('admin/edit-product', {
+//       pageTitle: 'Edit Product',
+//       path: '/admin/edit-product',
+//       editing: edit,
+//       product
+//     });
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
+
+// exports.getProducts = async (req, res) => {
+//   try {
+//     const products = await req.user.getProducts()
+//     res.render('admin/products', {
+//       prods: products,
+//       pageTitle: 'Admin products',
+//       path: '/admin/products',
+//     });
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
