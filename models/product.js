@@ -1,5 +1,18 @@
-const Sequelize = require('sequelize')
-const sequelize = require('../utils/database')
+const getDb = require('../utils/database').getDb
+class Product {
+  constructor(title, price, description, imageUrl) {
+    this.title = title
+    this.price = price
+    this.description = description
+    this.imageUrl = imageUrl
+  }
+
+  save() {
+
+  }
+}
+
+module.exports = Product
 
 const Product = sequelize.define('product', {
   id: {
