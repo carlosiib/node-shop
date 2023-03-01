@@ -1,3 +1,4 @@
+const mongodb = require('mongodb')
 const getDb = require('../utils/database').getDb
 class Product {
   constructor(title, price, description, imageUrl) {
@@ -22,6 +23,17 @@ class Product {
       const db = getDb()
       const products = await db.collection('products').find().toArray()
       return products
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  static async findById(prodId) {
+    try {
+      const db = getDb()
+      //TODO: FIX argument 12 bytes from ObjectId
+      const product = await db.collection('products').find({ _id: new mongodb.ObjectId(prodId) }).next()
+      return product
     } catch (error) {
       console.log(error)
     }
