@@ -1,15 +1,18 @@
 const Product = require("../models/product")
 
 exports.getProducts = async (req, res, next) => {
-  Product.findAll()
-    .then((products) => {
-      res.render('shop/product-list', {
-        prods: products,
-        pageTitle: 'All products',
-        path: '/products',
-      });
-    })
-    .catch((error) => console.log(error))
+  try {
+    const products = await Product.fetchAll()
+    res.render('shop/product-list', {
+      prods: products,
+      pageTitle: 'All products',
+      path: '/products',
+    });
+  } catch (error) {
+    console.log(error)
+  }
+
+
 }
 
 exports.getProduct = async (req, res) => {
@@ -30,7 +33,7 @@ exports.getProduct = async (req, res) => {
 
 exports.getIndex = async (req, res) => {
   try {
-    const p = await Product.findAll()
+    const p = await Product.fetchAll()
     res.render('shop/product-list', {
       prods: p,
       pageTitle: 'All products',

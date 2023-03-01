@@ -8,7 +8,7 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 const adminRoute = require('./routes/admin')
-// const shopRoutes = require('./routes/shop')
+const shopRoutes = require('./routes/shop')
 
 const errorController = require('./controllers/error')
 const mongoConnect = require('./utils/database').mongoConnect
@@ -29,7 +29,7 @@ app.use(async (req, res, next) => {
 })
 
 app.use('/admin', adminRoute)
-// app.use(shopRoutes)
+app.use(shopRoutes)
 
 app.use(errorController.get404)
 

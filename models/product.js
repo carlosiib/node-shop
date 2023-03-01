@@ -16,6 +16,16 @@ class Product {
       console.log(error)
     }
   }
+
+  static async fetchAll() {
+    try {
+      const db = getDb()
+      const products = await db.collection('products').find().toArray()
+      return products
+    } catch (error) {
+      console.log(error)
+    }
+  }
 }
 
 module.exports = Product
