@@ -26,7 +26,6 @@ app.use(async (req, res, next) => {
   } catch (error) {
     console.log(error)
   }
-  next()
 })
 
 app.use('/admin', adminRoute)

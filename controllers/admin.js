@@ -16,6 +16,8 @@ exports.postAddProduct = async (req, res, next) => {
       price,
       imageUrl,
       description,
+      null,
+      req.user._id
     )
     await product.save()
     res.redirect("/admin/products")
