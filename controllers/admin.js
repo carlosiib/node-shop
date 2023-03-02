@@ -72,15 +72,15 @@ exports.postAddProduct = async (req, res, next) => {
 //   }
 // }
 
-// exports.getProducts = async (req, res) => {
-//   try {
-//     const products = await req.user.getProducts()
-//     res.render('admin/products', {
-//       prods: products,
-//       pageTitle: 'Admin products',
-//       path: '/admin/products',
-//     });
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
+exports.getProducts = async (req, res) => {
+  try {
+    const products = await Product.fetchAll()
+    res.render('admin/products', {
+      prods: products,
+      pageTitle: 'Admin products',
+      path: '/admin/products',
+    });
+  } catch (error) {
+    console.log(error)
+  }
+}
