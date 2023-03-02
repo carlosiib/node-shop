@@ -60,6 +60,14 @@ exports.getCart = async (req, res) => {
 exports.postCart = async (req, res) => {
   try {
     const { productId } = req.body
+    const product = await Product.findById(productId)
+    const addedProd = await req.user.addToCart(product)
+    return addedProd
+  } catch (error) {
+    console.log(error)
+  }
+  /*try {
+    const { productId } = req.body
     const cart = await req.user.getCart()
     const products = await cart.getProducts({ where: { id: productId } })
 
@@ -78,7 +86,7 @@ exports.postCart = async (req, res) => {
     res.redirect('/cart')
   } catch (error) {
     console.log(error)
-  }
+  }*/
 }
 
 exports.postCartDeleteProduct = async (req, res) => {
