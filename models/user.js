@@ -20,10 +20,23 @@ class User {
 
   async addToCart(product) {
     try {
-      // const cartProduct= this.cart.items.findIndex(p => p._id === product._id)
+      const cartProductIndex = this.cart.items.findIndex(p => p.productId.toString() === product._id.toString())
+      const updatedCartItems = [...this.cart.items]
 
-      // cart init
-      const updatedCart = { items: [{ productId: new mongodb.ObjectId(product._id), quantity: 1 }] }
+      // Update - PRODUCT ALREADY EXISTS
+      let newQuantity = 1
+      if (cartProductIndex >= 0) {
+        newQuantity = this.cart.items[cartProductIndex].quantity + 1
+        updatedCartItems[cartProductIndex].quantity = newQuantity
+      } else {
+        updatedCartItems.push({
+          productId: new mongodb.ObjectId(product._id),
+          quantity: newQuantity
+        })
+      }
+
+      // cart update
+      const updatedCart = { items: updatedCartItems }
 
       const db = getDb()
       const user = await db.collection('users').updateOne({ _id: new mongodb.ObjectId(this._id) }, {
