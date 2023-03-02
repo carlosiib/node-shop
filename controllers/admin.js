@@ -35,16 +35,15 @@ exports.postEditProduct = async (req, res) => {
   }
 }
 
-// exports.postDeleteProduct = async (req, res) => {
-//   try {
-//     const { productId } = req.body
-//     const product = await Product.findByPk(productId)
-//     await product.destroy()
-//     res.redirect("/admin/products")
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
+exports.postDeleteProduct = async (req, res) => {
+  try {
+    const { productId } = req.body
+    await Product.deleteById(productId)
+    res.redirect("/admin/products")
+  } catch (error) {
+    console.log(error)
+  }
+}
 
 exports.getEditProduct = async (req, res, next) => {
   try {
