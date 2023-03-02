@@ -12,19 +12,20 @@ const shopRoutes = require('./routes/shop')
 
 const errorController = require('./controllers/error')
 const mongoConnect = require('./utils/database').mongoConnect
+const User = require('./models/user')
 
 //npm start
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(async (req, res, next) => {
-  // try {
-  //   const user = await User.findByPk(1)
-  //   req.user = user
-  //   next()
-  // } catch (error) {
-  //   console.log(error)
-  // }
+  try {
+    const user = await User.findById('640039855dea820e9cb6b1a1')
+    req.user = user
+    next()
+  } catch (error) {
+    console.log(error)
+  }
   next()
 })
 
