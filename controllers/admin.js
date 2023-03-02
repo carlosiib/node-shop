@@ -24,20 +24,16 @@ exports.postAddProduct = async (req, res, next) => {
   }
 }
 
-// exports.postEditProduct = async (req, res) => {
-//   try {
-//     const { productId, title, description, price, imageUrl } = req.body
-//     const product = await Product.findByPk(productId)
-//     product.title = title
-//     product.description = description
-//     product.price = price
-//     product.imageUrl = imageUrl
-//     await product.save()
-//     res.redirect("/admin/products")
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
+exports.postEditProduct = async (req, res) => {
+  try {
+    const { productId, title, description, price, imageUrl } = req.body
+    const newProd = new Product(title, price, description, imageUrl, productId)
+    await newProd.save()
+    res.redirect("/admin/products")
+  } catch (error) {
+    console.log(error)
+  }
+}
 
 // exports.postDeleteProduct = async (req, res) => {
 //   try {
@@ -50,27 +46,27 @@ exports.postAddProduct = async (req, res, next) => {
 //   }
 // }
 
-// exports.getEditProduct = async (req, res, next) => {
-//   try {
-//     const { edit } = req.query
-//     const { productId } = req.params
+exports.getEditProduct = async (req, res, next) => {
+  try {
+    const { edit } = req.query
+    const { productId } = req.params
 
-//     const [product] = await req.user.getProducts({ where: { id: productId } })
+    const product = await Product.findById(productId)
 
-//     if (!edit || !product) {
-//       return res.redirect('/')
-//     }
+    if (!edit || !product) {
+      return res.redirect('/')
+    }
 
-//     res.render('admin/edit-product', {
-//       pageTitle: 'Edit Product',
-//       path: '/admin/edit-product',
-//       editing: edit,
-//       product
-//     });
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
+    res.render('admin/edit-product', {
+      pageTitle: 'Edit Product',
+      path: '/admin/edit-product',
+      editing: edit,
+      product
+    });
+  } catch (error) {
+    console.log(error)
+  }
+}
 
 exports.getProducts = async (req, res) => {
   try {
