@@ -80,6 +80,20 @@ class User {
     }
   }
 
+  async addOrder() {
+    try {
+      const db = getDb()
+      await db.collection('orders').insertOne(this.cart)
+      this.cart = { items: [] }
+      const order = await db.collection('users').updateOne({ _id: new mongodb.ObjectId(this._id) }, {
+        $set: { cart: { items: [] } }
+      })
+      return order
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   static async findById(userId) {
     try {
       const db = getDb()

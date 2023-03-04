@@ -79,17 +79,7 @@ exports.postCartDeleteProduct = async (req, res) => {
 
 exports.postOrder = async (req, res) => {
   try {
-    const cart = await req.user.getCart()
-    const products = await cart.getProducts()
-    const order = await req.user.createOrder()
-    await order.addProducts(products.map(p => {
-      p.orderItem = { quantity: p.cartItem.quantity }
-      return p
-    }
-    ))
-
-    // Empty cart items 
-    await cart.setProducts(null)
+    await req.user.addOrder()
     res.redirect('/orders')
   } catch (error) {
     console.log(error)
