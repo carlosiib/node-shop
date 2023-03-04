@@ -83,12 +83,29 @@ class User {
   async addOrder() {
     try {
       const db = getDb()
-      await db.collection('orders').insertOne(this.cart)
+      const cart = await this.getCart()
+      const createOrder = {
+        items: cart,
+        user: {
+          id: new mongodb.ObjectId(this._id),
+          name: this.name
+        }
+      }
+      await db.collection('orders').insertOne(createOrder)
       this.cart = { items: [] }
       const order = await db.collection('users').updateOne({ _id: new mongodb.ObjectId(this._id) }, {
         $set: { cart: { items: [] } }
       })
       return order
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async getOrders() {
+    try {
+      const db = getDb()
+      // await db.collection('orders')
     } catch (error) {
       console.log(error)
     }
