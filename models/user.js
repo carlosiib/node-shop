@@ -87,7 +87,7 @@ class User {
       const createOrder = {
         items: cart,
         user: {
-          id: new mongodb.ObjectId(this._id),
+          _id: new mongodb.ObjectId(this._id),
           name: this.name
         }
       }
@@ -105,7 +105,9 @@ class User {
   async getOrders() {
     try {
       const db = getDb()
-      // await db.collection('orders')
+      const orders = await db.collection('orders').find({ 'user._id': new mongodb.ObjectId(this._id) }).
+        toArray()
+      return orders
     } catch (error) {
       console.log(error)
     }
