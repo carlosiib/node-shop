@@ -31,6 +31,7 @@ class User {
       } else {
         updatedCartItems.push({
           productId: new mongodb.ObjectId(product._id),
+          // name: product.title,
           quantity: newQuantity
         })
       }
@@ -43,6 +44,24 @@ class User {
         $set: { cart: updatedCart }
       })
       return user
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async getCart() {
+    try {
+      const db = getDb()
+      const productsIds = this.cart.items.map(i => i.productId)
+      const cart = await db.collection('products').find({ _id: { $in: productsIds } }).toArray()
+
+      const products = cart.map(p => {
+        return {
+          ...p,
+          quantity: this.cart.items.find(i => { return i.productId.toString() === p._id.toString() }).quantity
+        }
+      })
+      return products
     } catch (error) {
       console.log(error)
     }
