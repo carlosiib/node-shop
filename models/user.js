@@ -67,6 +67,19 @@ class User {
     }
   }
 
+  async deleteCartItem(pId) {
+    try {
+      const items = this.cart.items.filter(i => i.productId.toString() !== pId.toString())
+      const db = getDb()
+      const updatedCartItems = await db.collection('users').updateOne({ _id: new mongodb.ObjectId(this._id) }, {
+        $set: { cart: { items: items } }
+      })
+      return updatedCartItems
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   static async findById(userId) {
     try {
       const db = getDb()
