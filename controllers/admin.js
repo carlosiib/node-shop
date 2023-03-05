@@ -27,8 +27,12 @@ exports.postAddProduct = async (req, res, next) => {
 exports.postEditProduct = async (req, res) => {
   try {
     const { productId, title, description, price, imageUrl } = req.body
-    const newProd = new Product(title, price, description, imageUrl, productId)
-    await newProd.save()
+    const p = await Product.findById(productId)
+    p.title = title
+    p.description = description
+    p.price = price
+    p.imageUrl = imageUrl
+    await p.save()
     res.redirect("/admin/products")
   } catch (error) {
     console.log(error)
@@ -69,7 +73,7 @@ exports.getEditProduct = async (req, res, next) => {
 
 exports.getProducts = async (req, res) => {
   try {
-    const products = await Product.fetchAll()
+    const products = await Product.find()
     res.render('admin/products', {
       prods: products,
       pageTitle: 'Admin products',
