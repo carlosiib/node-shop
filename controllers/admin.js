@@ -11,14 +11,12 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = async (req, res, next) => {
   try {
     const { title, description, price, imageUrl } = req.body
-    const product = new Product(
+    const product = new Product({
       title,
       price,
-      imageUrl,
       description,
-      null,
-      req.user._id
-    )
+      imageUrl,
+    })
     await product.save()
     res.redirect("/admin/products")
   } catch (error) {
