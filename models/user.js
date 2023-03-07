@@ -27,6 +27,34 @@ const UserSchema = new Schema({
   }
 })
 
+UserSchema.methods.addToCart = async function (product) {
+  try {
+    const cartProductIndex = this.cart.items.findIndex(p => p.productId.toString() === product._id.toString())
+    const updatedCartItems = [...this.cart.items]
+
+    // Update - PRODUCT ALREADY EXISTS
+    let newQuantity = 1
+    if (cartProductIndex >= 0) {
+      newQuantity = this.cart.items[cartProductIndex].quantity + 1
+      updatedCartItems[cartProductIndex].quantity = newQuantity
+    } else {
+      updatedCartItems.push({
+        productId: product._id,
+        quantity: newQuantity
+        // name: product.title,
+      })
+    }
+
+    // cart update
+    const updatedCart = { items: updatedCartItems }
+    this.cart = updatedCart
+
+    return this.save()
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 module.exports = mongoose.model('User', UserSchema)
 
 // const mongodb = require('mongodb')
