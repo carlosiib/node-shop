@@ -105,7 +105,7 @@ exports.postOrder = async (req, res) => {
 
 exports.getOrders = async (req, res) => {
   try {
-    const orders = await req.user.getOrders()
+    const orders = await Order.find({ 'user.userId': req.user._id })
     res.render('shop/orders', {
       pageTitle: 'Orders',
       path: '/orders',
