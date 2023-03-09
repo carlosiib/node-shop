@@ -5,14 +5,14 @@ exports.getAddProduct = (req, res, next) => {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
     editing: false,
-    isAuthenticated: false
+    isAuthenticated: req.session.isLoggedIn
   });
 }
 
 exports.postAddProduct = async (req, res, next) => {
   try {
     const { title, description, price, imageUrl } = req.body
-    const { _id: userId } = req.user
+    const { _id: userId } = req.session.user
     const product = new Product({
       title,
       price,
@@ -68,7 +68,7 @@ exports.getEditProduct = async (req, res, next) => {
       path: '/admin/edit-product',
       editing: edit,
       product,
-      isAuthenticated: false
+      isAuthenticated: req.session.isLoggedIn
     });
   } catch (error) {
     console.log(error)
@@ -82,7 +82,7 @@ exports.getProducts = async (req, res) => {
       prods: products,
       pageTitle: 'Admin products',
       path: '/admin/products',
-      isAuthenticated: false
+      isAuthenticated: req.session.isLoggedIn
     });
   } catch (error) {
     console.log(error)

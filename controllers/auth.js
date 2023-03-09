@@ -1,9 +1,11 @@
+const User = require("../models/user");
+
 exports.getLogin = async (req, res) => {
   try {
     res.render('auth/login', {
       pageTitle: 'Login',
       path: '/login',
-      isAuthenticated: false
+      isAuthenticated: req.session.isLoggedIn
     });
   } catch (error) {
     console.log(error)
@@ -12,10 +14,13 @@ exports.getLogin = async (req, res) => {
 
 exports.postLogin = async (req, res) => {
   try {
-
+    const user = await User.findById('6406c073eec6bd5a6bf0866b')
     req.session.isLoggedIn = true
+    req.session.user = user
     res.redirect('/')
   } catch (error) {
+    req.session.isLoggedIn = false
+    req.session.user = null
     console.log(error)
   }
 }

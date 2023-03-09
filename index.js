@@ -29,16 +29,6 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: 'my secret', resave: false, saveUninitialized: false, store: store }))
 
-app.use(async (req, res, next) => {
-  try {
-    const user = await User.findById('6406c073eec6bd5a6bf0866b')
-    req.user = user
-    next()
-  } catch (error) {
-    console.log(error)
-  }
-})
-
 app.use('/admin', adminRoute)
 app.use(shopRoutes)
 app.use(authRoutes)
