@@ -4,7 +4,8 @@ exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
-    editing: false
+    editing: false,
+    isAuthenticated: false
   });
 }
 
@@ -66,7 +67,8 @@ exports.getEditProduct = async (req, res, next) => {
       pageTitle: 'Edit Product',
       path: '/admin/edit-product',
       editing: edit,
-      product
+      product,
+      isAuthenticated: false
     });
   } catch (error) {
     console.log(error)
@@ -80,6 +82,7 @@ exports.getProducts = async (req, res) => {
       prods: products,
       pageTitle: 'Admin products',
       path: '/admin/products',
+      isAuthenticated: false
     });
   } catch (error) {
     console.log(error)

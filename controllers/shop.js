@@ -8,6 +8,7 @@ exports.getProducts = async (req, res, next) => {
       prods: products,
       pageTitle: 'All products',
       path: '/products',
+      isAuthenticated: false
     });
   } catch (error) {
     console.log(error)
@@ -23,7 +24,8 @@ exports.getProduct = async (req, res) => {
     res.render('shop/product-detail', {
       product: product,
       pageTitle: product.title,
-      path: '/products'
+      path: '/products',
+      isAuthenticated: false
     })
   } catch (error) {
     console.log(error)
@@ -38,6 +40,7 @@ exports.getIndex = async (req, res) => {
       prods: p,
       pageTitle: 'All products',
       path: '/products',
+      isAuthenticated: false
     });
   } catch (error) {
     console.log(error)
@@ -50,7 +53,8 @@ exports.getCart = async (req, res) => {
     res.render('shop/cart', {
       path: '/cart',
       pageTitle: 'Your Cart',
-      products: items
+      products: items,
+      isAuthenticated: false
     });
   } catch (error) {
     console.log(error)
@@ -110,6 +114,7 @@ exports.getOrders = async (req, res) => {
       pageTitle: 'Orders',
       path: '/orders',
       orders,
+      isAuthenticated: false
     });
   } catch (error) {
     console.log(error)
@@ -121,5 +126,6 @@ exports.getCheckout = (req, res) => {
   res.render('shop/checkout', {
     pageTitle: 'Checkout',
     path: '/cart',
+    isAuthenticated: false
   });
 }
