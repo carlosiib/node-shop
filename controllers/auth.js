@@ -12,8 +12,8 @@ exports.getLogin = async (req, res) => {
 
 exports.postLogin = async (req, res) => {
   try {
-    const { email, password } = req.body
-    res.setHeader('Set-Cookie', 'loggedIn=true')
+
+    req.session.isLoggedIn = true
     res.redirect('/')
   } catch (error) {
     console.log(error)

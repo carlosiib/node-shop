@@ -2,7 +2,16 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const path = require('path')
 const mongoose = require('mongoose')
+const session = require('express-session')
+const MongoDBStore = require('connect-mongodb-session')(session)
 const app = express()
+
+const MONGODB_URI = 'mongodb://carlosiia96:BHkkdJkhrR8mmAc9@ac-8mf0rts-shard-00-00.zsc21y9.mongodb.net:27017,ac-8mf0rts-shard-00-01.zsc21y9.mongodb.net:27017,ac-8mf0rts-shard-00-02.zsc21y9.mongodb.net:27017/?ssl=true&replicaSet=atlas-pqpcdj-shard-0&authSource=admin&w=majority'
+
+const store = new MongoDBStore({
+  uri: MONGODB_URI,
+  collection: 'session'
+})
 
 
 app.set('view engine', 'ejs');
@@ -18,6 +27,7 @@ const User = require('./models/user')
 //npm start
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({ secret: 'my secret', resave: false, saveUninitialized: false, store: store }))
 
 app.use(async (req, res, next) => {
   try {
@@ -37,7 +47,7 @@ app.use(errorController.get404)
 
 async function init() {
   try {
-    await mongoose.connect('mongodb://carlosiia96:BHkkdJkhrR8mmAc9@ac-8mf0rts-shard-00-00.zsc21y9.mongodb.net:27017,ac-8mf0rts-shard-00-01.zsc21y9.mongodb.net:27017,ac-8mf0rts-shard-00-02.zsc21y9.mongodb.net:27017/?ssl=true&replicaSet=atlas-pqpcdj-shard-0&authSource=admin&retryWrites=true&w=majority')
+    await mongoose.connect(MONGODB_URI)
     const existingUser = await User.findOne()
     if (!existingUser) {
       const user = new User({
