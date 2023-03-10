@@ -24,3 +24,15 @@ exports.postLogin = async (req, res) => {
     console.log(error)
   }
 }
+
+exports.postLogout = async (req, res) => {
+  try {
+    req.session.destroy(() => {
+      res.redirect('/')
+    })
+  } catch (error) {
+    req.session.isLoggedIn = false
+    req.session.user = null
+    console.log(error)
+  }
+}
