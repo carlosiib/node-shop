@@ -17,7 +17,9 @@ exports.postLogin = async (req, res) => {
     const user = await User.findById('6406c073eec6bd5a6bf0866b')
     req.session.isLoggedIn = true
     req.session.user = user
-    res.redirect('/')
+    req.session.save(() => {
+      res.redirect('/')
+    })
   } catch (error) {
     req.session.isLoggedIn = false
     req.session.user = null
