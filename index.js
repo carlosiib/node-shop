@@ -29,6 +29,21 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: 'my secret', resave: false, saveUninitialized: false, store: store }))
 
+// Middleware for getting user methods from mongoose Model
+app.use(async (req, res, next) => {
+  if (!req.session.user) {
+    return next()
+  }
+
+  try {
+    const user = await User.findById(req.session.user._id)
+    req.user = user
+    next()
+  } catch (error) {
+    console.log(error)
+  }
+})
+
 app.use('/admin', adminRoute)
 app.use(shopRoutes)
 app.use(authRoutes)
