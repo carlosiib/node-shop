@@ -35,7 +35,28 @@ exports.getSignup = (req, res) => {
   });
 };
 
-exports.postSignup = (req, res, next) => { };
+exports.postSignup = async (req, res, next) => {
+  try {
+    const { email, password, confirmPassword } = req.body
+    const user = await User.findOne({ email })
+    // User already exists
+    if (user) {
+      return res.redirect('/signup')
+    }
+
+    // User doesn't exists
+    const newUser = new User({
+      email,
+      password,
+      cart: { items: [] }
+    })
+    await newUser.save()
+    res.redirect('/login')
+
+  } catch (error) {
+    console.log(error)
+  }
+};
 
 
 exports.postLogout = async (req, res) => {
