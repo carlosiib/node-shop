@@ -27,6 +27,17 @@ exports.postLogin = async (req, res) => {
   }
 }
 
+exports.getSignup = (req, res) => {
+  res.render('auth/signup', {
+    path: '/signup',
+    pageTitle: 'Signup',
+    isAuthenticated: false
+  });
+};
+
+exports.postSignup = (req, res, next) => { };
+
+
 exports.postLogout = async (req, res) => {
   try {
     req.session.destroy(() => {
