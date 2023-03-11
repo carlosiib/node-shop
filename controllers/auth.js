@@ -15,16 +15,29 @@ exports.getLogin = async (req, res) => {
 
 exports.postLogin = async (req, res) => {
   try {
-    const user = await User.findById('6406c073eec6bd5a6bf0866b')
-    req.session.isLoggedIn = true
-    req.session.user = user
-    req.session.save(() => {
-      res.redirect('/')
-    })
+    const { email, password } = req.body
+    const user = await User.findOne({ email })
+
+    if (!user) {
+      return res.redirect('/login')
+    }
+
+    // Validate user
+    const doMatch = await bcrypt.compare(password, user.password)
+
+    if (doMatch) {
+      req.session.isLoggedIn = true
+      req.session.user = user
+      await req.session.save()
+      return res.redirect('/')
+    }
+
+    res.redirect('/login')
   } catch (error) {
+    console.log(error)
     req.session.isLoggedIn = false
     req.session.user = null
-    console.log(error)
+    res.redirect("/login")
   }
 }
 
