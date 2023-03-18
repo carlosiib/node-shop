@@ -84,7 +84,7 @@ exports.postCartDeleteProduct = async (req, res) => {
 
 exports.postOrder = async (req, res) => {
   try {
-    const { name, _id: userId } = req.user
+    const { email, _id: userId } = req.user
     const { cart: { items } } = await req.user.populate('cart.items.productId')
     const products = items.map(p => {
       return {
@@ -95,7 +95,7 @@ exports.postOrder = async (req, res) => {
     const order = new Order({
       products,
       user: {
-        name,
+        email: email,
         userId
       }
     })
