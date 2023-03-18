@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const path = require('path')
 const mongoose = require('mongoose')
 const session = require('express-session')
+const csrf = require('csurf')
 const MongoDBStore = require('connect-mongodb-session')(session)
 const app = express()
 
@@ -12,6 +13,7 @@ const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: 'session'
 })
+const csrfProtection = csrf()
 
 
 app.set('view engine', 'ejs');
@@ -28,6 +30,7 @@ const User = require('./models/user')
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: 'my secret', resave: false, saveUninitialized: false, store: store }))
+app.use(csrfProtection)
 
 // Middleware for getting user methods from mongoose Model
 app.use(async (req, res, next) => {

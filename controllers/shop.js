@@ -38,7 +38,8 @@ exports.getIndex = async (req, res) => {
       prods: p,
       pageTitle: 'All products',
       path: '/products',
-      isAuthenticated: req.session.isLoggedIn
+      isAuthenticated: req.session.isLoggedIn,
+      csrfToken: req.csrfToken()
     });
   } catch (error) {
     console.log(error)
@@ -52,7 +53,8 @@ exports.getCart = async (req, res) => {
       path: '/cart',
       pageTitle: 'Your Cart',
       products: items,
-      isAuthenticated: req.session.isLoggedIn
+      isAuthenticated: req.session.isLoggedIn,
+      csrfToken: req.csrfToken()
     });
   } catch (error) {
     console.log(error)
