@@ -4,6 +4,7 @@ const path = require('path')
 const mongoose = require('mongoose')
 const session = require('express-session')
 const csrf = require('csurf')
+const flash = require('connect-flash')
 const MongoDBStore = require('connect-mongodb-session')(session)
 const app = express()
 
@@ -31,6 +32,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: 'my secret', resave: false, saveUninitialized: false, store: store }))
 app.use(csrfProtection)
+app.use(flash())
 
 // Middleware for getting user methods from mongoose Model
 app.use(async (req, res, next) => {
