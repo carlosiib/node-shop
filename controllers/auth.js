@@ -6,7 +6,6 @@ exports.getLogin = async (req, res) => {
     res.render('auth/login', {
       pageTitle: 'Login',
       path: '/login',
-      isAuthenticated: req.session.isLoggedIn
     });
   } catch (error) {
     console.log(error)
