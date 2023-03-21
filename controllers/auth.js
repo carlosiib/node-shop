@@ -1,5 +1,17 @@
 const bcrypt = require('bcryptjs')
+const nodemailer = require('nodemailer')
+require('dotenv').config();
+
 const User = require("../models/user");
+
+const transporter = nodemailer.createTransport({
+  host: "sandbox.smtp.mailtrap.io",
+  port: 2525,
+  auth: {
+    user: process.env.USER_ID_MAILTRAP,
+    pass: process.env.USER_PASS_MAILTRAP
+  }
+});
 
 exports.getLogin = async (req, res) => {
   const [error] = req.flash('error')
@@ -73,6 +85,22 @@ exports.postSignup = async (req, res, next) => {
       cart: { items: [] }
     })
     await newUser.save()
+
+    const message = {
+      from: "foo@gmail.com",
+      to: email,
+      subject: "Account created successfully",
+      html: "<h1>Welcome to Shop</h1><p>Your account was created successfully </p>",
+    };
+
+    transporter.sendMail(message, function (error, info) {
+      if (error) {
+        throw Error("Signup: sending email failed");
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
+
     res.redirect('/login')
 
   } catch (error) {
