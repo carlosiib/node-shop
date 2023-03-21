@@ -61,7 +61,6 @@ exports.getSignup = (req, res) => {
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
-    isAuthenticated: false,
     errorMessage: error?.length > 0 ? error : null
   });
 };
@@ -117,6 +116,19 @@ exports.postLogout = async (req, res) => {
   } catch (error) {
     req.session.isLoggedIn = false
     req.session.user = null
+    console.log(error)
+  }
+}
+
+exports.getReset = (req, res) => {
+  try {
+    const [error] = req.flash('error')
+    res.render('auth/reset', {
+      path: '/reset',
+      pageTitle: 'Reset Password',
+      errorMessage: error?.length > 0 ? error : null
+    });
+  } catch (error) {
     console.log(error)
   }
 }
