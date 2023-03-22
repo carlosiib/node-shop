@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs')
 const nodemailer = require('nodemailer')
 require('dotenv').config();
+const crypto = require('crypto')
 
 const User = require("../models/user");
 
@@ -128,6 +129,48 @@ exports.getReset = (req, res) => {
       pageTitle: 'Reset Password',
       errorMessage: error?.length > 0 ? error : null
     });
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+exports.postReset = (req, res) => {
+  try {
+    const { email } = req.body
+    crypto.randomBytes(32, async (err, buffer) => {
+      if (err) {
+        res.redirect('/reset')
+        throw Error("Generating crypto failed")
+      }
+
+      const token = buffer.toString('hex')
+      const user = await User.findOne({ email: email })
+
+      if (!user) {
+        req.flash('error', "No account found with email " + email)
+        return res.redirect('/reset')
+      }
+
+      user.resetToken = token
+      user.resetTokenExpiration = Date.now() + 3_600_000
+      await user.save()
+      res.redirect('/')
+      const message = {
+        from: "foo@gmail.com",
+        to: email,
+        subject: "Password reset",
+        html: `<h1>Reset your password at:</h1> <a href="http://localhost:3000/reset/${token}">Reset</a>`,
+      };
+
+      transporter.sendMail(message, function (error, info) {
+        if (error) {
+          throw Error("Reset password: sending email failed");
+        } else {
+          console.log("Email sent, reset password: " + info.response);
+        }
+      });
+
+    })
   } catch (error) {
     console.log(error)
   }
