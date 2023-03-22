@@ -175,3 +175,27 @@ exports.postReset = (req, res) => {
     console.log(error)
   }
 }
+exports.getNewPassword = async (req, res) => {
+  try {
+    const { token } = req.params
+
+    // $gt ->  grater than
+    const user = await User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
+
+    if (!user) {
+      res.redirect("/login")
+      throw Error("Invalid user for resetting password")
+    }
+
+    const [error] = req.flash('error')
+    res.render('auth/new-password', {
+      path: '/new-password',
+      pageTitle: 'Update Password',
+      errorMessage: error?.length > 0 ? error : null,
+      userId: user._id.toString()
+    });
+  } catch (error) {
+    console.log(error)
+  }
+
+}
