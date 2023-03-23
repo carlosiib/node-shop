@@ -97,7 +97,7 @@ exports.postSignup = async (req, res, next) => {
       if (error) {
         throw Error("Signup: sending email failed");
       } else {
-        console.log("Email sent: " + info.response);
+        console.log("Signup - Email sent: " + info.response);
       }
     });
 
@@ -154,7 +154,7 @@ exports.postReset = (req, res) => {
       user.resetToken = token
       user.resetTokenExpiration = Date.now() + 3_600_000
       await user.save()
-      res.redirect('/')
+
       const message = {
         from: "foo@gmail.com",
         to: email,
@@ -170,11 +170,14 @@ exports.postReset = (req, res) => {
         }
       });
 
+      res.redirect('/')
+
     })
   } catch (error) {
     console.log(error)
   }
 }
+
 exports.getNewPassword = async (req, res) => {
   try {
     const { token } = req.params
@@ -192,10 +195,28 @@ exports.getNewPassword = async (req, res) => {
       path: '/new-password',
       pageTitle: 'Update Password',
       errorMessage: error?.length > 0 ? error : null,
-      userId: user._id.toString()
+      userId: user._id.toString(),
+      passwordToken: token
     });
   } catch (error) {
     console.log(error)
   }
+}
 
+exports.postNewPassword = async (req, res) => {
+  try {
+    const { password, userId, passwordToken } = req.body
+
+    const user = await User.findOne({ resetToken: passwordToken, resetTokenExpiration: { $gt: Date.now() }, _id: userId })
+
+    const hashedPassword = await bcrypt.hash(password, 12)
+    user.password = hashedPassword;
+    user.resetToken = null;
+    user.resetTokenExpiration = undefined
+
+    await user.save()
+    res.redirect('/login')
+  } catch (error) {
+    console.log(error)
+  }
 }
