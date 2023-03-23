@@ -75,7 +75,9 @@ exports.getEditProduct = async (req, res, next) => {
 
 exports.getProducts = async (req, res) => {
   try {
-    const products = await Product.find()
+    const { _id } = req.user
+    // Admin - Products created only by current user
+    const products = await Product.find({ userId: _id })
     res.render('admin/products', {
       prods: products,
       pageTitle: 'Admin products',
