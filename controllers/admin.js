@@ -29,7 +29,14 @@ exports.postAddProduct = async (req, res, next) => {
 exports.postEditProduct = async (req, res) => {
   try {
     const { productId, title, description, price, imageUrl } = req.body
+    const { _id } = req.user
+
     const p = await Product.findById(productId)
+
+    if (p.userId.toString() !== _id.toString()) {
+      return res.redirect('/')
+    }
+
     p.title = title
     p.description = description
     p.price = price
@@ -44,7 +51,8 @@ exports.postEditProduct = async (req, res) => {
 exports.postDeleteProduct = async (req, res) => {
   try {
     const { productId } = req.body
-    await Product.findByIdAndRemove(productId)
+    const { _id } = req.user
+    await Product.deleteOne({ _id: productId, userId: _id })
     res.redirect("/admin/products")
   } catch (error) {
     console.log(error)
@@ -77,7 +85,6 @@ exports.getProducts = async (req, res) => {
   try {
     const { _id } = req.user
     // Admin - Products created only by current user
-    // Products created only by current user
     const products = await Product.find({ userId: _id })
     res.render('admin/products', {
       prods: products,
