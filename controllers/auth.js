@@ -64,7 +64,8 @@ exports.getSignup = (req, res) => {
     path: '/signup',
     pageTitle: 'Signup',
     errorMessage: error?.length > 0 ? error : null,
-    oldInput: { email: "", password: "", confirmPassword: "" }
+    oldInput: { email: "", password: "", confirmPassword: "" },
+    validationErrors: []
   });
 };
 
@@ -79,7 +80,8 @@ exports.postSignup = async (req, res, next) => {
         path: '/signup',
         pageTitle: 'Signup',
         errorMessage: errors.array()[0].msg,
-        oldInput: { email: email, password: password, confirmPassword: confirmPassword }
+        oldInput: { email: email, password: password, confirmPassword: confirmPassword },
+        validationErrors: errors.array()
       });
     }
 
