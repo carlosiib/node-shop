@@ -63,13 +63,14 @@ exports.getSignup = (req, res) => {
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
-    errorMessage: error?.length > 0 ? error : null
+    errorMessage: error?.length > 0 ? error : null,
+    oldInput: { email: "", password: "", confirmPassword: "" }
   });
 };
 
 exports.postSignup = async (req, res, next) => {
   try {
-    const { email, password } = req.body
+    const { email, password, confirmPassword } = req.body
 
     const errors = validationResult(req)
 
@@ -77,11 +78,13 @@ exports.postSignup = async (req, res, next) => {
       return res.status(422).render('auth/signup', {
         path: '/signup',
         pageTitle: 'Signup',
-        errorMessage: errors.array()[0].msg
+        errorMessage: errors.array()[0].msg,
+        oldInput: { email: email, password: password, confirmPassword: confirmPassword }
       });
     }
 
     const user = await User.findOne({ email })
+
     // User already exists
     if (user) {
       req.flash('error', 'Email already exists')
