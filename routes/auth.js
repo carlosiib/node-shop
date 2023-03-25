@@ -7,7 +7,12 @@ router.get('/login', authController.getLogin);
 router.post('/login', authController.postLogin);
 
 router.get('/signup', authController.getSignup);
-router.post('/signup', [check('email').isEmail().withMessage('Please enter a valid email.'), check('password').isLength({ min: 6 }).withMessage('Password needs to be at least 6 characters long.')], authController.postSignup);
+router.post('/signup', [check('email').isEmail().withMessage('Please enter a valid email.'), check('password').isLength({ min: 6 }).withMessage('Password needs to be at least 6 characters long.'), check("confirmPassword").custom((value, { req }) => {
+  if (value !== req.body.password) {
+    throw new Error("Passwords must match.")
+  }
+  return true
+})], authController.postSignup);
 
 router.post('/logout', authController.postLogout);
 
