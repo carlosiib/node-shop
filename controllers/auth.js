@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs')
 const nodemailer = require('nodemailer')
 require('dotenv').config();
 const crypto = require('crypto')
+const { validationResult } = require('express-validator/check')
 
 const User = require("../models/user");
 
@@ -68,9 +69,19 @@ exports.getSignup = (req, res) => {
 
 exports.postSignup = async (req, res, next) => {
   try {
-    const { email, password, confirmPassword } = req.body
-    const user = await User.findOne({ email })
+    const { email, password } = req.body
 
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty()) {
+      return res.status(422).render('auth/signup', {
+        path: '/signup',
+        pageTitle: 'Signup',
+        errorMessage: errors.array()[0].msg
+      });
+    }
+
+    const user = await User.findOne({ email })
     // User already exists
     if (user) {
       req.flash('error', 'Email already exists')
