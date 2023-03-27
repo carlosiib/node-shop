@@ -29,6 +29,6 @@
   display: block;
 }
 
-.form-control input.invalid {
+.form-control :is(input, textarea).invalid {
   border-color:rgb(184, 33, 33)
 }
