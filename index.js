@@ -42,10 +42,13 @@ app.use(async (req, res, next) => {
 
   try {
     const user = await User.findById(req.session.user._id)
+    if (!user) {
+      return next()
+    }
     req.user = user
     next()
   } catch (error) {
-    console.log(error)
+    throw new Error(error)
   }
 })
 
@@ -59,6 +62,7 @@ app.use('/admin', adminRoute)
 app.use(shopRoutes)
 app.use(authRoutes)
 
+app.use('/500', errorController.get500)
 app.use(errorController.get404)
 
 async function init() {

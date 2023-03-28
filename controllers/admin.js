@@ -21,7 +21,7 @@ exports.postAddProduct = async (req, res, next) => {
     if (!errors.isEmpty()) {
       return res.status(422).render('admin/edit-product', {
         pageTitle: 'Add Product',
-        path: '/admin/edit-product',
+        path: '/admin/add-product',
         editing: false,
         hasErrors: true,
         errorMessage: errors.array()[0].msg,
@@ -45,7 +45,7 @@ exports.postAddProduct = async (req, res, next) => {
     await product.save()
     res.redirect("/admin/products")
   } catch (error) {
-    console.log(error)
+    res.redirect('/500')
   }
 }
 
