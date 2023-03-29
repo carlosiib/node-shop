@@ -20,7 +20,9 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = async (req, res, next) => {
   try {
-    const { title, description, price, imageUrl } = req.body
+    const { title, description, price } = req.body
+    const image = req.file
+    console.log(image)
     const { _id: userId } = req.user
 
     const errors = validationResult(req)
@@ -36,7 +38,7 @@ exports.postAddProduct = async (req, res, next) => {
           title,
           description,
           price,
-          imageUrl
+          image
         }
       });
     }
@@ -45,7 +47,7 @@ exports.postAddProduct = async (req, res, next) => {
       title,
       price,
       description,
-      imageUrl,
+      image,
       userId
     })
     await product.save()
