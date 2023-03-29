@@ -2,14 +2,20 @@ const Product = require("../models/product")
 const { validationResult } = require('express-validator/check')
 
 exports.getAddProduct = (req, res, next) => {
-  res.render('admin/edit-product', {
-    pageTitle: 'Add Product',
-    path: '/admin/add-product',
-    editing: false,
-    hasErrors: false,
-    errorMessage: null,
-    validationErrors: []
-  });
+  try {
+    res.render('admin/edit-product', {
+      pageTitle: 'Add Product',
+      path: '/admin/add-product',
+      editing: false,
+      hasErrors: false,
+      errorMessage: null,
+      validationErrors: []
+    });
+  } catch (err) {
+    const error = new Error("Getting products failed")
+    error.httpStatusCode = 500
+    return next(error)
+  }
 }
 
 exports.postAddProduct = async (req, res, next) => {
@@ -44,12 +50,14 @@ exports.postAddProduct = async (req, res, next) => {
     })
     await product.save()
     res.redirect("/admin/products")
-  } catch (error) {
-    res.redirect('/500')
+  } catch (err) {
+    const error = new Error("Creating product failed")
+    error.httpStatusCode = 500
+    return next(error)
   }
 }
 
-exports.postEditProduct = async (req, res) => {
+exports.postEditProduct = async (req, res, next) => {
   try {
     const { productId, title, description, price, imageUrl } = req.body
     const { _id } = req.user
@@ -85,19 +93,23 @@ exports.postEditProduct = async (req, res) => {
     p.imageUrl = imageUrl
     await p.save()
     res.redirect("/admin/products")
-  } catch (error) {
-    console.log(error)
+  } catch (err) {
+    const error = new Error("Edit product failed")
+    error.httpStatusCode = 500
+    return next(error)
   }
 }
 
-exports.postDeleteProduct = async (req, res) => {
+exports.postDeleteProduct = async (req, res, next) => {
   try {
     const { productId } = req.body
     const { _id } = req.user
     await Product.deleteOne({ _id: productId, userId: _id })
     res.redirect("/admin/products")
-  } catch (error) {
-    console.log(error)
+  } catch (err) {
+    const error = new Error("Deleting product failed")
+    error.httpStatusCode = 500
+    return next(error)
   }
 }
 
@@ -121,14 +133,17 @@ exports.getEditProduct = async (req, res, next) => {
       validationErrors: [],
       product
     });
-  } catch (error) {
-    console.log(error)
+  } catch (err) {
+    const error = new Error("Editing product failed")
+    error.httpStatusCode = 500
+    return next(error)
   }
 }
 
-exports.getProducts = async (req, res) => {
+exports.getProducts = async (req, res, next) => {
   try {
     const { _id } = req.user
+
     // Admin - Products created only by current user
     const products = await Product.find({ userId: _id })
     res.render('admin/products', {
@@ -136,7 +151,10 @@ exports.getProducts = async (req, res) => {
       pageTitle: 'Admin products',
       path: '/admin/products',
     });
-  } catch (error) {
-    console.log(error)
+    //throw Error("Test error middleware")
+  } catch (err) {
+    const error = new Error("Getting products failed")
+    error.httpStatusCode = 500
+    return next(error)
   }
 }
