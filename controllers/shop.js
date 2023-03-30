@@ -1,5 +1,7 @@
 const Product = require("../models/product")
 const Order = require("../models/order")
+const path = require('path')
+const fs = require('fs')
 
 exports.getProducts = async (req, res, next) => {
   try {
@@ -137,6 +139,28 @@ exports.getOrders = async (req, res, next) => {
   }
 }
 
+exports.getInvoice = (req, res, next) => {
+  try {
+    const { orderId } = req.params
+    const invoiceName = 'udmy.pdf'
+    const invoicePath = path.join('invoices', invoiceName)
+    fs.readFile(invoicePath, (err, data) => {
+      if (err) {
+        return next(err)
+      }
+
+      res.send(data)
+    })
+
+
+
+
+  } catch (err) {
+    const error = new Error("Getting invoice failed")
+    error.httpStatusCode = 500
+    return next(error)
+  }
+}
 
 exports.getCheckout = (req, res, next) => {
   try {
