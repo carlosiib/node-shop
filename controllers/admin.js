@@ -21,9 +21,24 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = async (req, res, next) => {
   try {
     const { title, description, price } = req.body
-    const image = req.file
-    console.log(image)
     const { _id: userId } = req.user
+
+    const image = req.file
+    if (!image) {
+      return res.status(422).render('admin/edit-product', {
+        pageTitle: 'Add Product',
+        path: '/admin/add-product',
+        editing: false,
+        hasErrors: true,
+        errorMessage: "Attached file is not an image",
+        validationErrors: [],
+        product: {
+          title,
+          description,
+          price,
+        }
+      })
+    }
 
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -38,7 +53,6 @@ exports.postAddProduct = async (req, res, next) => {
           title,
           description,
           price,
-          image
         }
       });
     }
@@ -47,7 +61,7 @@ exports.postAddProduct = async (req, res, next) => {
       title,
       price,
       description,
-      image,
+      imageUrl: image.path,
       userId
     })
     await product.save()
@@ -61,8 +75,9 @@ exports.postAddProduct = async (req, res, next) => {
 
 exports.postEditProduct = async (req, res, next) => {
   try {
-    const { productId, title, description, price, imageUrl } = req.body
+    const { productId, title, description, price } = req.body
     const { _id } = req.user
+    const image = req.file
 
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -78,7 +93,6 @@ exports.postEditProduct = async (req, res, next) => {
           title,
           description,
           price,
-          imageUrl
         }
       });
     }
@@ -92,7 +106,9 @@ exports.postEditProduct = async (req, res, next) => {
     p.title = title
     p.description = description
     p.price = price
-    p.imageUrl = imageUrl
+    if (image) {
+      p.imageUrl = image.path
+    }
     await p.save()
     res.redirect("/admin/products")
   } catch (err) {
