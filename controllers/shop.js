@@ -154,16 +154,11 @@ exports.getInvoice = async (req, res, next) => {
 
     const invoiceName = 'udmy.pdf'
     const invoicePath = path.join('invoices', invoiceName)
-    fs.readFile(invoicePath, (err, data) => {
-      if (err) {
-        return next(err)
-      }
+    const file = fs.createReadStream(invoicePath)
+    res.setHeader('Content-Type', 'application/pdf')
+    res.setHeader('Content-Disposition', 'attachment; filename="' + invoiceName + '"')
+    file.pipe(res)
 
-      res.setHeader('Content-Type', 'application/pdf')
-      // set extension file
-      res.setHeader('Content-Disposition', 'attachment; filename="' + invoiceName + '"')
-      res.send(data)
-    })
   } catch (err) {
     const error = new Error("Getting invoice failed")
     error.httpStatusCode = 500
