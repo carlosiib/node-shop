@@ -139,9 +139,19 @@ exports.getOrders = async (req, res, next) => {
   }
 }
 
-exports.getInvoice = (req, res, next) => {
+exports.getInvoice = async (req, res, next) => {
   try {
     const { orderId } = req.params
+    const order = await Order.findById(orderId)
+
+    //Invoice only corresponding to user
+    if (!order) {
+      return next(new Error("No order found for user"))
+    }
+    if (order.user.userId.toString() !== req.user._id.toString()) {
+      return next(new Error("Unauthorized"))
+    }
+
     const invoiceName = 'udmy.pdf'
     const invoicePath = path.join('invoices', invoiceName)
     fs.readFile(invoicePath, (err, data) => {
@@ -154,10 +164,6 @@ exports.getInvoice = (req, res, next) => {
       res.setHeader('Content-Disposition', 'attachment; filename="' + invoiceName + '"')
       res.send(data)
     })
-
-
-
-
   } catch (err) {
     const error = new Error("Getting invoice failed")
     error.httpStatusCode = 500
