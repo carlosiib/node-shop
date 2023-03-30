@@ -2,6 +2,7 @@ const Product = require("../models/product")
 const Order = require("../models/order")
 const path = require('path')
 const fs = require('fs')
+const PDFDocument = require('pdfkit')
 
 exports.getProducts = async (req, res, next) => {
   try {
@@ -154,10 +155,16 @@ exports.getInvoice = async (req, res, next) => {
 
     const invoiceName = 'udmy.pdf'
     const invoicePath = path.join('invoices', invoiceName)
-    const file = fs.createReadStream(invoicePath)
     res.setHeader('Content-Type', 'application/pdf')
-    res.setHeader('Content-Disposition', 'attachment; filename="' + invoiceName + '"')
-    file.pipe(res)
+    res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"')
+
+    const pdfDoc = new PDFDocument()
+    // generate and save on server
+    pdfDoc.pipe(fs.createWriteStream(invoicePath))
+    // send to client
+    pdfDoc.pipe(res)
+    pdfDoc.text("Hello foo")
+    pdfDoc.end()
 
   } catch (err) {
     const error = new Error("Getting invoice failed")
