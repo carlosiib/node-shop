@@ -42,14 +42,22 @@ exports.getProduct = async (req, res, next) => {
 
 exports.getIndex = async (req, res, next) => {
   try {
+
     const { page } = req.query
+    const totalProds = await Product.find().countDocuments()
     const p = await Product.find().skip((page - 1) * ITEMS_PER_PAGE).limit(ITEMS_PER_PAGE)
     res.render('shop/product-list', {
       prods: p,
       pageTitle: 'All products',
       path: '/products',
       isAuthenticated: req.session.isLoggedIn,
-      csrfToken: req.csrfToken()
+      csrfToken: req.csrfToken(),
+      totalProducts: totalProds,
+      hasNextPage: ITEMS_PER_PAGE * page < totalProds,
+      hasPreviousPage: page > 1,
+      nextPage: page + 1,
+      previousPage: page - 1,
+      lastPage: Math.ceil(totalProds / ITEMS_PER_PAGE)
     });
   } catch (err) {
     const error = new Error("Fetch products failed")
