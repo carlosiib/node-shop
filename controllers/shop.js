@@ -4,6 +4,8 @@ const path = require('path')
 const fs = require('fs')
 const PDFDocument = require('pdfkit')
 
+const ITEMS_PER_PAGE = 2
+
 exports.getProducts = async (req, res, next) => {
   try {
     const products = await Product.find()
@@ -40,7 +42,8 @@ exports.getProduct = async (req, res, next) => {
 
 exports.getIndex = async (req, res, next) => {
   try {
-    const p = await Product.find()
+    const { page } = req.query
+    const p = await Product.find().skip((page - 1) * ITEMS_PER_PAGE).limit(ITEMS_PER_PAGE)
     res.render('shop/product-list', {
       prods: p,
       pageTitle: 'All products',
