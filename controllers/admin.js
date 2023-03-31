@@ -1,5 +1,6 @@
 const Product = require("../models/product")
 const { validationResult } = require('express-validator/check')
+const fileHelper = require('../utils/file')
 
 exports.getAddProduct = (req, res, next) => {
   try {
@@ -107,6 +108,7 @@ exports.postEditProduct = async (req, res, next) => {
     p.description = description
     p.price = price
     if (image) {
+      fileHelper.deleteFile(p.imageUrl)
       p.imageUrl = image.path
     }
     await p.save()
@@ -122,6 +124,13 @@ exports.postDeleteProduct = async (req, res, next) => {
   try {
     const { productId } = req.body
     const { _id } = req.user
+
+    const product = await Product.findById(productId)
+    if (!product) {
+      throw new Error("Delete: Product not found")
+    }
+
+    fileHelper.deleteFile(product.imageUrl)
     await Product.deleteOne({ _id: productId, userId: _id })
     res.redirect("/admin/products")
   } catch (err) {
