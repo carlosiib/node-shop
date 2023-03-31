@@ -163,7 +163,16 @@ exports.getInvoice = async (req, res, next) => {
     pdfDoc.pipe(fs.createWriteStream(invoicePath))
     // send to client
     pdfDoc.pipe(res)
-    pdfDoc.text("Hello foo")
+    pdfDoc.fontSize(26).text("Invoice")
+    pdfDoc.fontSize(16).text("Order - " + order._id)
+    pdfDoc.fontSize(26).text("-------")
+    let totalPrice = 0
+    order.products.forEach(p => {
+      totalPrice += p.quantity * p.product.price
+      pdfDoc.fontSize(16).text(p.product.title + " - " + p.quantity + " x " + "$" + p.product.price)
+    })
+    pdfDoc.fontSize(26).text("-------")
+    pdfDoc.text('Total: $' + totalPrice)
     pdfDoc.end()
 
   } catch (err) {
