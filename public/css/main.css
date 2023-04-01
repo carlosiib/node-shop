@@ -258,12 +258,11 @@ form {
   border:1px solid #00695c;
 }
 
-.pagination a
-:not(:last-child) {
+.pagination a:not(:last-child) {
   margin-right:1rem;
 }
 
-.pagination a:is(:hover, :active){
+.pagination a:is(:hover, :active, .active){
   background: #00695c;
   color: white;
 }

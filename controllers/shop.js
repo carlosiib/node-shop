@@ -8,12 +8,22 @@ const ITEMS_PER_PAGE = 2
 
 exports.getProducts = async (req, res, next) => {
   try {
-    const products = await Product.find()
+    const { page } = req.query
+    const _page = parseInt(page ?? 1)
+
+    const totalProds = await Product.find().countDocuments()
+    const p = await Product.find().skip((page - 1) * ITEMS_PER_PAGE).limit(ITEMS_PER_PAGE)
     res.render('shop/product-list', {
-      prods: products,
+      prods: p,
       pageTitle: 'All products',
       path: '/products',
-      isAuthenticated: req.session.isLoggedIn
+      isAuthenticated: req.session.isLoggedIn,
+      currentPage: _page,
+      hasNextPage: ITEMS_PER_PAGE * _page < totalProds,
+      hasPreviousPage: _page > 1,
+      nextPage: _page + 1,
+      previousPage: _page - 1,
+      lastPage: Math.ceil(totalProds / ITEMS_PER_PAGE)
     });
   } catch (err) {
     const error = new Error("Fetch products failed")
@@ -42,8 +52,9 @@ exports.getProduct = async (req, res, next) => {
 
 exports.getIndex = async (req, res, next) => {
   try {
-
     const { page } = req.query
+    const _page = parseInt(page ?? 1)
+
     const totalProds = await Product.find().countDocuments()
     const p = await Product.find().skip((page - 1) * ITEMS_PER_PAGE).limit(ITEMS_PER_PAGE)
     res.render('shop/product-list', {
@@ -52,11 +63,11 @@ exports.getIndex = async (req, res, next) => {
       path: '/products',
       isAuthenticated: req.session.isLoggedIn,
       csrfToken: req.csrfToken(),
-      totalProducts: totalProds,
-      hasNextPage: ITEMS_PER_PAGE * page < totalProds,
-      hasPreviousPage: page > 1,
-      nextPage: page + 1,
-      previousPage: page - 1,
+      currentPage: _page,
+      hasNextPage: ITEMS_PER_PAGE * _page < totalProds,
+      hasPreviousPage: _page > 1,
+      nextPage: _page + 1,
+      previousPage: _page - 1,
       lastPage: Math.ceil(totalProds / ITEMS_PER_PAGE)
     });
   } catch (err) {
