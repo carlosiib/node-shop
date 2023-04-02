@@ -204,11 +204,18 @@ exports.getInvoice = async (req, res, next) => {
   }
 }
 
-exports.getCheckout = (req, res, next) => {
+exports.getCheckout = async (req, res, next) => {
   try {
+    const { cart: { items } } = await req.user.populate('cart.items.productId')
+    let total = 0;
+    items.forEach(p => {
+      total += p.quantity * p.productId.price
+    })
     res.render('shop/checkout', {
       pageTitle: 'Checkout',
-      path: '/cart',
+      path: '/checkout',
+      products: items,
+      totalSum: total,
       isAuthenticated: req.session.isLoggedIn
     });
   } catch (err) {

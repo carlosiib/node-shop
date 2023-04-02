@@ -1,0 +1,25 @@
+<%- include('../includes/head.ejs') %>
+  </head>
+
+  <body>
+    <%- include('../includes/navigation.ejs') %>
+      <main>
+        <% if (products.length> 0) { %>
+          <ul>
+            <% products.forEach(p=> { %>
+              <li class="container cart-item">
+                <p class="cart-item__title">
+                  <%= p.productId.title %>
+                </p>
+                <p> Quantity: <%= p.quantity %>
+                </p>
+              </li>
+              <% }) %>
+          </ul>
+          <div class="container txt-right">
+            <h2> Total: $<%= totalSum %>
+            </h2>
+          </div>
+          <% } %>
+      </main>
+      <%- include('../includes/end.ejs') %>
