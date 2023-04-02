@@ -120,6 +120,24 @@ exports.postEditProduct = async (req, res, next) => {
   }
 }
 
+exports.deleteProduct = async (req, res, next) => {
+  try {
+    const { productId } = req.params
+    const { _id } = req.user
+
+    const product = await Product.findById(productId)
+    if (!product) {
+      throw new Error("Delete: Product not found")
+    }
+
+    fileHelper.deleteFile(product.imageUrl)
+    await Product.deleteOne({ _id: productId, userId: _id })
+    res.status(200).json({ message: 'success' })
+  } catch (err) {
+    res.status(500).json({ message: 'Delete failed' })
+  }
+}
+
 exports.postDeleteProduct = async (req, res, next) => {
   try {
     const { productId } = req.body
