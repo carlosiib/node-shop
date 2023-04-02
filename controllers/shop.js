@@ -3,6 +3,8 @@ const Order = require("../models/order")
 const path = require('path')
 const fs = require('fs')
 const PDFDocument = require('pdfkit')
+require('dotenv').config();
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
 const ITEMS_PER_PAGE = 2
 
@@ -211,15 +213,59 @@ exports.getCheckout = async (req, res, next) => {
     items.forEach(p => {
       total += p.quantity * p.productId.price
     })
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: items.map(p => {
+        return {
+          name: p.productId.title,
+          description: p.productId.description,
+          amount: p.productId.price * 100,
+          currency: 'usd',
+          quantity: p.quantity,
+        }
+      }),
+      success_url: `${req.protocol}://${req.get('host')}/checkout/success`, // http://localhost:3000/checkout/success
+      cancel_url: `${req.protocol}://${req.get('host')}/checkout/cancel`
+    })
+
     res.render('shop/checkout', {
       pageTitle: 'Checkout',
       path: '/checkout',
       products: items,
       totalSum: total,
-      isAuthenticated: req.session.isLoggedIn
+      isAuthenticated: req.session.isLoggedIn,
+      sessionId: session.id
     });
   } catch (err) {
     const error = new Error("Getting checkout failed")
+    error.httpStatusCode = 500
+    return next(error)
+  }
+}
+
+exports.getCheckoutSuccess = async (req, res, next) => {
+  try {
+    const { email, _id: userId } = req.user
+    const { cart: { items } } = await req.user.populate('cart.items.productId')
+    const products = items.map(p => {
+      return {
+        quantity: p.quantity,
+        product: { ...p.productId._doc }
+      }
+    })
+    const order = new Order({
+      products,
+      user: {
+        email: email,
+        userId
+      }
+    })
+    await order.save()
+    await req.user.clearCart()
+    res.redirect('/orders')
+  } catch (err) {
+    const error = new Error("Post order failed")
     error.httpStatusCode = 500
     return next(error)
   }
